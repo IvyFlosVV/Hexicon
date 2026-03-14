@@ -67,6 +67,9 @@
             color: var(--text);
         }
         .form-wrap { width: 100%; margin-left: 0; margin-top: 32px; }
+        .flash-messages { margin-bottom: 1rem; }
+        .flash { margin: 0; padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.9rem; }
+        .flash-error { background: rgba(201, 74, 74, 0.2); border: 1px solid rgba(201, 74, 74, 0.5); color: #f87171; }
         form {
             width: 100%;
             margin-left: 0;
@@ -131,6 +134,15 @@
         <a href="{{ url_for('index') }}" class="btn-back">← Back to list</a>
         <h1 class="subpage-title">Add New Item</h1>
         <div class="form-wrap">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages" role="alert">
+                        {% for category, msg in messages %}
+                            <p class="flash flash-{{ category }}">{{ msg }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
             <form method="post" action="{{ url_for('create') }}">
                 <label for="name">Name</label>
                 <input type="text" id="name" name="name" required autocomplete="off" placeholder="e.g. Ocean Blue">

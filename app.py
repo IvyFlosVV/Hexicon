@@ -1,9 +1,10 @@
 import sqlite3
 from collections import Counter
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 
 app = Flask(__name__)
+app.secret_key = "hexicon-debug-session"
 
 
 def get_db_connection():
@@ -121,6 +122,7 @@ def create():
         tags = request.form.get("tags", "").strip()
         content = request.form.get("content", "").strip()
         if not name or raw_type not in ("color", "css") or not content:
+            flash("Please fill in Name, Type, and Content.", "error")
             return redirect(url_for("create"))
         element_type = "Color" if raw_type == "color" else "CSS"
         conn = get_db_connection()
@@ -181,13 +183,16 @@ def edit(id):
         tags = request.form.get("tags", "").strip()
         content = request.form.get("content", "").strip()
         if not name:
+            flash("Please fill in Name.", "error")
             conn.close()
             return redirect(url_for("edit", id=id))
         if raw_type not in ("color", "css"):
+            flash("Please select a valid Type (Color or CSS).", "error")
             conn.close()
             return redirect(url_for("edit", id=id))
         element_type = "Color" if raw_type == "color" else "CSS"
         if not content:
+            flash("Please fill in Content.", "error")
             conn.close()
             return redirect(url_for("edit", id=id))
         conn.execute(
